@@ -1,0 +1,18 @@
+// Standing privilege changes. Activity log must be exported to the workspace.
+AzureActivity
+| where TimeGenerated > ago(7d)
+| where OperationNameValue has_any (
+    "Microsoft.Authorization/roleAssignments/write",
+    "Microsoft.Authorization/roleAssignments/delete"
+)
+| extend Role = tostring(parse_json(tostring(Properties_d)).roleDefinitionId)
+| project
+    TimeGenerated,
+    Caller,
+    OperationNameValue,
+    ActivityStatusValue,
+    Scope = tostring(Properties_d.scope),
+    Role,
+    CorrelationId
+| order by TimeGenerated desc
+| take 50

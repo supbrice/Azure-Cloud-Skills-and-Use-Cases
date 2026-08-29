@@ -1,0 +1,11 @@
+// Entra sign-in failures. Requires SigninLogs in the workspace.
+SigninLogs
+| where TimeGenerated > ago(24h)
+| where ResultType != 0
+| summarize
+    Failures = count(),
+    Users = dcount(UserPrincipalName),
+    SampleErrors = make_set(ResultDescription, 5)
+    by UserPrincipalName, AppDisplayName, IPAddress, ResultType
+| order by Failures desc
+| take 50

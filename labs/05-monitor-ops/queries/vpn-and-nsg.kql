@@ -1,0 +1,23 @@
+// VPN / gateway and NSG counters. Empty until diagnostics are flowing.
+union isfuzzy=true
+    (
+        AzureDiagnostics
+        | where TimeGenerated > ago(6h)
+        | where ResourceType in ("VIRTUALNETWORKGATEWAYS", "CONNECTIONS")
+        | summarize Count = count() by ResourceType, ResultType = tostring(resultType_s), bin(TimeGenerated, 15m)
+    ),
+    (
+        AzureMetrics
+        | where TimeGenerated > ago(6h)
+        | where ResourceProvider == "MICROSOFT.NETWORK"
+        | where MetricName in ("TunnelIngressBytes", "TunnelEgressBytes", "BGPPeerStatus")
+        | summarize AvgValue = avg(Average) by MetricName, Resource, bin(TimeGenerated, 15m)
+    ),
+    (
+        AzureDiagnostics
+        | where TimeGenerated > ago(6h)
+        | where Category in ("NetworkSecurityGroupEvent", "NetworkSecurityGroupRuleCounter")
+        | summarize Count = count() by Category, Rule = tostring(ruleName_s), bin(TimeGenerated, 15m)
+    )
+| order by TimeGenerated desc
+| take 100

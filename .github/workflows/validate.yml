@@ -1,0 +1,48 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Naming self-test
+        run: python3 labs/03-terraform-modules/scripts/check_naming.py --self-test
+      - name: Compile Python helpers
+        run: |
+          python3 -m py_compile \
+            labs/03-terraform-modules/scripts/check_naming.py \
+            labs/05-monitor-ops/scripts/query_workspace.py
+      - name: Print KQL via helper
+        run: python3 labs/05-monitor-ops/scripts/query_workspace.py --print-query rbac-changes
+
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+      - name: terraform fmt
+        run: terraform fmt -check -recursive
+      - name: terraform validate lab
+        working-directory: terraform/lab
+        run: |
+          terraform init -backend=false -input=false
+          terraform validate
+
+  shell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: bash -n
+        run: |
+          bash -n labs/01-identity-access/scripts/export-standing-rbac.sh
+          bash -n labs/04-networking-dns-vpn/scripts/check-nsg-and-dns.sh
