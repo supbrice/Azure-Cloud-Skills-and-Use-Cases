@@ -20,6 +20,7 @@ ENVS = ("lab", "dev", "prod")
 REGIONS = ("eus", "cus", "wus", "eus2")
 ROLES = (
     "hub-vnet",
+    "hub-vng",
     "spoke-vnet",
     "vnet",
     "nsg",
@@ -63,6 +64,8 @@ def _self_test() -> int:
     cases = {
         "lab-eus-hub-vnet": [],
         "lab-eus-hub-vnet-nsg": [],
+        "lab-eus-hub-vng": [],
+        "lab-eus-law": [],
         "prod-cus-law": [],
         "LAB-eus-vnet": ["must be lowercase"],
         "lab_eus_vnet": ["only a-z, 0-9, and hyphen", "expected {env}-{region}-{role}, env="],

@@ -45,7 +45,7 @@ module "identity" {
 module "monitor" {
   source = "../modules/monitoring"
 
-  name                = "${replace(var.name_prefix, "-", "")}-law"
+  name                = "${var.name_prefix}-law"
   location            = var.location
   resource_group_name = azurerm_resource_group.lab.name
   alert_email         = var.alert_email
