@@ -1,0 +1,31 @@
+# Azure DevOps: validate only. Does not apply.
+# Wire a service connection if you later add `terraform plan`.
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: "3.12"
+
+  - script: python3 labs/03-terraform-modules/scripts/check_naming.py --self-test
+    displayName: Naming convention self-test
+
+  - task: TerraformInstaller@1
+    inputs:
+      terraformVersion: "1.9.8"
+
+  - script: terraform fmt -check -recursive
+    displayName: terraform fmt
+
+  - script: |
+      set -euo pipefail
+      cd terraform/lab
+      terraform init -backend=false -input=false
+      terraform validate
+    displayName: terraform validate (lab composition)
