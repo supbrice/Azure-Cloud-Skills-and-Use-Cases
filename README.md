@@ -1,6 +1,6 @@
 # azure-architect-labs
 
-Reference labs for **Ngu Brice Che** ([supbrice](https://github.com/supbrice)) — Azure Solutions Architect Expert (Nov 2024) and Azure Administrator Associate (Sep 2024).
+Reference labs for **Brice** ([supbrice](https://github.com/supbrice)) — Azure Solutions Architect Expert (Nov 2024) and Azure Administrator Associate (Sep 2024).
 
 This repo used to be a beginner Azure 101 list (VM / App Service / AKS / SQL / Functions plus `az group create`). That does not match the work: **hybrid Azure, Entra ID, Terraform + PowerShell + Python, and operations**. These labs do.
 
